@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shreeneeta &amp; Gz — Engagement Ceremony</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<style>
+  :root{
+    --royal:#2E0F45;
+    --royal-deep:#160820;
+    --emerald:#1F5C4A;
+    --gold:#D9B24C;
+    --gold-light:#F3DFA0;
+    --maroon:#7A1F2B;
+    --ivory:#F8F1E4;
+    --charcoal:#2A2320;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 20% 0%, #f6ecd6 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 100%, #e7e9df 0%, transparent 55%),
+      var(--ivory);
+    font-family:'EB Garamond', serif;
+    color:var(--charcoal);
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{ font-family:'Cinzel', serif; letter-spacing:2px; }
+  .deco{ font-family:'Cinzel Decorative', serif; }
+
+  /* ================= GOLD CONFETTI ================= */
+  .confetti{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:2; }
+  .flake{ position:absolute; top:-30px; opacity:0; animation-name:fall; animation-timing-function:linear; animation-iteration-count:infinite; }
+  @keyframes fall{
+    0%{ transform:translateY(-5vh) translateX(0) rotate(0deg); opacity:0; }
+    8%{ opacity:.9; }
+    100%{ transform:translateY(105vh) translateX(var(--drift,40px)) rotate(360deg); opacity:.15; }
+  }
+
+  /* ================= ROYAL GATE INTRO ================= */
+  .overlay{
+    position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(ellipse at center, #3a1650, var(--royal-deep) 75%); overflow:hidden; perspective:1400px;
+  }
+  .overlay.done{ visibility:hidden; }
+
+  .gate{
+    position:absolute; top:0; bottom:0; width:50%; z-index:4;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,.25), transparent 30%),
+      linear-gradient(160deg, #3a1650, #1B082B 70%);
+    border:2px solid var(--gold);
+    transition:transform 1.4s cubic-bezier(.7,0,.15,1);
+    box-shadow:0 0 60px rgba(217,178,76,.15) inset;
+  }
+  .gate.left{ left:0; border-right:none; transform-origin:left center; }
+  .gate.right{ right:0; border-left:none; transform-origin:right center; }
+  .gate::before{ content:""; position:absolute; inset:14px; border:1px solid var(--gold); opacity:.6; }
+  .gate-orn{ position:absolute; top:50%; width:100%; text-align:center; transform:translateY(-50%); font-size:46px; color:var(--gold); opacity:.85; }
+  .gate.left .gate-orn{ right:-23px; }
+  .gate.right .gate-orn{ left:-23px; }
+  .overlay.open .gate.left{ transform:rotateY(-115deg) translateX(-6%); }
+  .overlay.open .gate.right{ transform:rotateY(115deg) translateX(6%); }
+
+  .light-burst{
+    position:absolute; width:10px; height:10px; border-radius:50%;
+    background:radial-gradient(circle, var(--gold-light), transparent 70%);
+    opacity:0; z-index:3; pointer-events:none;
+  }
+  .overlay.open .light-burst{ animation:burst 1.1s ease-out forwards; }
+  @keyframes burst{
+    0%{ opacity:.95; transform:scale(1) translate(0,0); }
+    100%{ opacity:0; transform:scale(.3) translate(var(--dx), var(--dy)); }
+  }
+
+  .crest-wrap{
+    position:relative; z-index:5; cursor:pointer; text-align:center; color:var(--gold-light);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .overlay.open .crest-wrap{ opacity:0; transform:scale(.6); pointer-events:none; }
+  .crest{
+    width:130px; height:130px; margin:0 auto 16px;
+    border:2px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cinzel Decorative', serif; font-size:32px; color:var(--gold-light);
+    background:radial-gradient(circle, rgba(217,178,76,.18), transparent);
+    box-shadow:0 0 36px rgba(217,178,76,.4);
+    animation:glow 2.4s ease-in-out infinite;
+  }
+  @keyframes glow{ 0%,100%{ box-shadow:0 0 20px rgba(217,178,76,.25);} 50%{ box-shadow:0 0 48px rgba(217,178,76,.6);} }
+  .crest-title{ font-family:'Cinzel',serif; font-size:13px; letter-spacing:5px; text-transform:uppercase; margin-bottom:6px; opacity:.85; }
+  .crest-hint{ font-family:'Cinzel',serif; font-size:12px; letter-spacing:4px; text-transform:uppercase; animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:.5;} 50%{opacity:1;} }
+
+  /* ================= MUSIC BUTTON ================= */
+  .music-btn{
+    position:fixed; top:16px; right:16px; z-index:60;
+    width:46px; height:46px; border-radius:50%;
+    border:1px solid var(--gold); background:var(--ivory); color:var(--maroon);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    box-shadow:0 6px 18px rgba(60,20,30,.25); opacity:0; transition:opacity .5s ease;
+  }
+  .music-btn.show{ opacity:1; }
+  .music-btn .bar{ display:inline-block; width:3px; margin:0 1px; background:var(--maroon); border-radius:2px; animation:eq .9s ease-in-out infinite; }
+  .music-btn.muted .bar{ animation-play-state:paused; height:4px !important; }
+  .bar:nth-child(1){height:8px;} .bar:nth-child(2){height:15px; animation-delay:.15s;} .bar:nth-child(3){height:6px; animation-delay:.3s;}
+  @keyframes eq{ 0%,100%{transform:scaleY(.4);} 50%{transform:scaleY(1);} }
+
+  /* ================= SECTION SHELL ================= */
+  section{ position:relative; z-index:3; padding:70px 22px; max-width:660px; margin:0 auto; text-align:center; }
+  .reveal{ opacity:0; transform:translateY(30px); transition:opacity .9s ease, transform .9s cubic-bezier(.2,.8,.2,1); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  .frame-line{ width:80px; height:1px; background:var(--gold); margin:18px auto; position:relative; }
+  .frame-line::before, .frame-line::after{ content:"◆"; position:absolute; top:50%; transform:translateY(-50%); color:var(--gold); font-size:10px; }
+  .frame-line::before{ left:-18px; } .frame-line::after{ right:-18px; }
+  .eyebrow{ font-size:13px; letter-spacing:5px; color:var(--maroon); text-transform:uppercase; font-family:'Cinzel',serif; }
+  .royal-frame{ border:1px solid var(--gold); outline:1px solid var(--gold); outline-offset:6px; border-radius:4px; padding:34px 26px; background:rgba(255,255,255,.5); }
+
+  /* ---- HERO ---- */
+  .hero{ padding-top:80px; }
+  .crown-top{ font-size:34px; color:var(--gold); animation:floaty 3s ease-in-out infinite; }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+  .hero-title{ font-size:14px; letter-spacing:5px; color:var(--maroon); text-transform:uppercase; margin-top:14px; }
+  .hero-names{
+    font-size:clamp(34px,8.5vw,54px); line-height:1.15; margin:16px 0 6px; font-family:'Cinzel Decorative', serif;
+    background:linear-gradient(100deg, var(--maroon) 15%, var(--gold) 40%, var(--emerald) 60%, var(--gold-light) 85%);
+    background-size:250% auto; color:transparent; -webkit-background-clip:text; background-clip:text;
+    animation:shimmer 6s linear infinite;
+  }
+  @keyframes shimmer{ to{ background-position:-250% center; } }
+  .hero-amp{ display:block; font-size:22px; color:var(--royal); margin:2px 0; }
+  .hero-msg{ font-size:19px; line-height:1.7; margin-top:10px; }
+
+  /* ---- COUNTDOWN ---- */
+  .countdown{ display:flex; gap:14px; justify-content:center; margin-top:34px; flex-wrap:wrap; }
+  .cd-box{
+    background:linear-gradient(160deg,var(--royal),var(--royal-deep)); border:1px solid var(--gold);
+    border-radius:8px; padding:14px 18px; min-width:78px; color:var(--gold-light);
+    box-shadow:0 10px 24px -10px rgba(30,10,40,.5);
+  }
+  .cd-num{ font-family:'Cinzel',serif; font-size:30px; line-height:1; }
+  .cd-label{ font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-top:6px; }
+
+  /* ---- DETAILS ---- */
+  .details-row{ display:flex; align-items:flex-start; gap:14px; text-align:left; margin-bottom:18px; }
+  .details-row:last-child{ margin-bottom:0; }
+  .details-icon{ font-size:24px; line-height:1; color:var(--maroon); }
+  .details-label{ font-family:'Cinzel',serif; font-size:12px; letter-spacing:2px; color:var(--maroon); text-transform:uppercase; }
+  .details-text{ font-size:18px; margin-top:2px; }
+
+  /* ---- TIMELINE ---- */
+  .timeline-title{ font-size:28px; color:var(--royal); }
+  .events{ margin-top:32px; display:flex; flex-direction:column; gap:22px; }
+  .event-card{
+    position:relative; text-align:left; background:#fffaf0; border:1px solid var(--gold);
+    border-radius:10px; padding:20px 24px; box-shadow:0 12px 28px -18px rgba(120,80,20,.35); overflow:hidden;
+  }
+  .event-card::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--emerald); }
+  .event-time{ font-family:'Cinzel',serif; font-size:12px; letter-spacing:2px; color:var(--emerald); text-transform:uppercase; }
+  .event-name{ font-family:'Cinzel',serif; font-size:21px; color:var(--royal); margin:4px 0 6px; }
+  .event-meta{ font-size:17px; line-height:1.5; }
+
+  /* ---- MEMORIES GALLERY ---- */
+  .gallery{ margin-top:32px; display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
+  .photo-frame{
+    position:relative; aspect-ratio:4/5; border:3px solid var(--gold); border-radius:6px;
+    outline:1px solid var(--gold); outline-offset:5px;
+    background:linear-gradient(160deg,#efe0c2,#f8ecd8);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    box-shadow:0 14px 30px -16px rgba(120,80,20,.4);
+    opacity:0; transform:translateY(36px) scale(.92) rotate(var(--tilt,0deg));
+    transition:opacity .8s cubic-bezier(.2,.8,.2,1), transform .8s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease;
+  }
+  .photo-frame:nth-child(1){ --tilt:-3deg; }
+  .photo-frame:nth-child(2){ --tilt:2.5deg; }
+  .photo-frame:nth-child(3){ --tilt:2deg; }
+  .photo-frame:nth-child(4){ --tilt:-2.5deg; }
+  .photo-frame.in{
+    opacity:1; transform:translateY(0) scale(1) rotate(0deg);
+    animation:frame-float 4.5s ease-in-out .8s infinite;
+  }
+  .photo-frame.in:nth-child(2){ animation-delay:1.1s; }
+  .photo-frame.in:nth-child(3){ animation-delay:1.4s; }
+  .photo-frame.in:nth-child(4){ animation-delay:1.7s; }
+  @keyframes frame-float{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-6px) rotate(0deg); } }
+  .photo-frame:hover{ box-shadow:0 20px 40px -14px rgba(120,80,20,.55); }
+  .photo-frame::after{
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:2;
+    background:linear-gradient(115deg, transparent 20%, rgba(255,255,255,.55) 42%, rgba(255,255,255,.55) 48%, transparent 65%);
+    transform:translateX(-140%);
+    animation:shine 4.5s ease-in-out infinite;
+  }
+  .photo-frame:nth-child(1)::after{ animation-delay:.3s; }
+  .photo-frame:nth-child(2)::after{ animation-delay:1.3s; }
+  .photo-frame:nth-child(3)::after{ animation-delay:2.3s; }
+  .photo-frame:nth-child(4)::after{ animation-delay:3.3s; }
+  @keyframes shine{ 0%{ transform:translateX(-140%); } 35%,100%{ transform:translateX(140%); } }
+  .photo-frame img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .6s ease; }
+  .photo-frame:hover img{ transform:scale(1.06); }
+  .photo-illustration{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+  .photo-illustration svg{ width:78%; height:78%; }
+  .photo-illustration path, .photo-illustration circle, .photo-illustration ellipse{
+    stroke-dasharray:300; stroke-dashoffset:300;
+    animation:draw-in 2.6s ease forwards;
+  }
+  @keyframes draw-in{ to{ stroke-dashoffset:0; } }
+  .gallery-note{ margin-top:16px; font-size:14px; color:var(--charcoal); opacity:.7; font-style:italic; }
+
+  /* ---- VENUE ---- */
+  .venue-name{ font-family:'Cinzel',serif; font-size:22px; color:var(--royal); }
+  .venue-addr{ font-size:18px; margin-top:6px; }
+  .map-link{
+    display:inline-block; margin-top:16px; padding:11px 30px; border:1px solid var(--maroon);
+    color:var(--maroon); text-decoration:none; letter-spacing:2px; font-family:'Cinzel',serif;
+    font-size:12px; border-radius:30px; transition:background .3s ease, color .3s ease;
+  }
+  .map-link:hover{ background:var(--maroon); color:var(--ivory); }
+
+  /* ---- DRESS CODE ---- */
+  .dress-row{ display:flex; gap:16px; justify-content:center; margin-top:24px; flex-wrap:wrap; }
+  .swatch{ text-align:center; font-size:14px; letter-spacing:1px; }
+  .swatch-color{ width:40px; height:40px; border-radius:50%; margin:0 auto 8px; border:2px solid #fff; box-shadow:0 0 0 1px var(--gold); }
+
+  /* ---- RSVP GUEST DETAIL FORM ---- */
+  .rsvp-page{
+    background:linear-gradient(160deg,var(--royal),var(--royal-deep)); color:var(--ivory);
+    border:1px solid var(--gold); border-radius:18px; padding:44px 28px; box-shadow:0 24px 60px -20px rgba(20,5,30,.6);
+    text-align:left;
+  }
+  .rsvp-page .eyebrow{ color:var(--gold-light); text-align:center; }
+  .rsvp-page h2{ color:var(--ivory); font-size:26px; margin:12px 0 6px; text-align:center; }
+  .rsvp-page .rsvp-intro{ font-size:16px; opacity:.85; text-align:center; margin-bottom:26px; }
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-family:'Cinzel',serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--gold-light); margin-bottom:7px; }
+  .field input, .field select, .field textarea{
+    width:100%; padding:11px 14px; border-radius:8px; border:1px solid var(--gold);
+    background:rgba(255,255,255,.08); color:var(--ivory); font-family:'EB Garamond', serif; font-size:16px;
+    outline:none; transition:box-shadow .3s ease, background .3s ease;
+  }
+  .field input::placeholder, .field textarea::placeholder{ color:rgba(248,241,228,.45); }
+  .field input:focus, .field select:focus, .field textarea:focus{ box-shadow:0 0 0 2px var(--gold-light); background:rgba(255,255,255,.14); }
+  .field select option{ color:#2A2320; }
+  .field-row{ display:flex; gap:14px; }
+  .field-row .field{ flex:1; }
+  .rsvp-submit{
+    display:block; width:100%; margin-top:8px; padding:14px; background:var(--gold);
+    color:var(--royal-deep); border:none; text-decoration:none; font-family:'Cinzel',serif; font-size:14px;
+    letter-spacing:2px; border-radius:30px; cursor:pointer; transition:transform .3s ease, box-shadow .3s ease;
+    text-align:center; text-transform:uppercase;
+  }
+  .rsvp-submit:hover{ transform:translateY(-2px); box-shadow:0 10px 20px rgba(0,0,0,.35); }
+  .rsvp-confirm{
+    display:none; text-align:center; padding:20px; margin-top:18px; border:1px solid var(--gold-light);
+    border-radius:10px; background:rgba(255,255,255,.06); font-size:16px;
+  }
+  .rsvp-confirm.show{ display:block; animation:reveal .6s ease; }
+  @keyframes reveal{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  .rsvp-note{ font-size:13px; opacity:.65; text-align:center; margin-top:14px; }
+
+  footer{ text-align:center; padding:40px 20px 70px; font-size:14px; letter-spacing:3px; color:var(--maroon); text-transform:uppercase; font-family:'Cinzel',serif; }
+</style>
+</head>
+<body>
+
+<div class="confetti" id="confetti"></div>
+
+<!-- ROYAL GATE INTRO -->
+<div class="overlay" id="overlay">
+  <div class="gate left"><div class="gate-orn">❧</div></div>
+  <div class="gate right"><div class="gate-orn">❧</div></div>
+  <div class="crest-wrap" id="crestWrap">
+    <div class="crest-title">By Royal Invitation</div>
+    <div class="crest">S ♛ G</div>
+    <div class="crest-hint">Tap the crest to open the gates</div>
+  </div>
+</div>
+
+<button class="music-btn" id="musicBtn" aria-label="Toggle music">
+  <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+</button>
+
+<!-- HERO -->
+<section class="hero reveal" id="sec-hero">
+  <div class="crown-top">♛</div>
+  <div class="hero-title">By royal invitation</div>
+  <div class="hero-names deco">Shreeneeta<span class="hero-amp deco">&amp;</span>Gz</div>
+  <div class="frame-line"></div>
+  <p class="hero-msg">request the honour of your presence<br>at their royal engagement ceremony</p>
+
+  <div class="countdown" id="countdown">
+    <div class="cd-box"><div class="cd-num" id="cd-days">--</div><div class="cd-label">Days</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-hours">--</div><div class="cd-label">Hours</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-mins">--</div><div class="cd-label">Minutes</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-secs">--</div><div class="cd-label">Seconds</div></div>
+  </div>
+</section>
+
+<!-- DETAILS -->
+<section class="reveal" id="sec-details">
+  <div class="eyebrow">The Details</div>
+  <h2 class="timeline-title">When &amp; Where</h2>
+  <div class="royal-frame">
+    <div class="details-row">
+      <div class="details-icon">📅</div>
+      <div><div class="details-label">Date</div><div class="details-text">Friday, 20th November 2026</div></div>
+    </div>
+    <div class="details-row">
+      <div class="details-icon">⏰</div>
+      <div><div class="details-label">Time</div><div class="details-text">6:30 in the evening</div></div>
+    </div>
+    <div class="details-row">
+      <div class="details-icon">👑</div>
+      <div><div class="details-label">Venue</div><div class="details-text">The Crown Pavilion, Nagpur</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHEDULE -->
+<section class="reveal" id="sec-events">
+  <div class="eyebrow">The Ceremony</div>
+  <h2 class="timeline-title">Order of the Evening</h2>
+  <div class="events">
+    <div class="event-card">
+      <div class="event-time">6:00 PM</div>
+      <div class="event-name">Welcome of Guests</div>
+      <div class="event-meta">Arrival with royal drummers and floral welcome</div>
+    </div>
+    <div class="event-card">
+      <div class="event-time">6:30 PM</div>
+      <div class="event-name">Ring Exchange Ceremony</div>
+      <div class="event-meta">Shreeneeta &amp; Gz exchange rings on the palace stage</div>
+    </div>
+    <div class="event-card">
+      <div class="event-time">7:15 PM</div>
+      <div class="event-name">Blessings &amp; Family Toast</div>
+      <div class="event-meta">Elders' blessings followed by a toast to the couple</div>
+    </div>
+    <div class="event-card">
+      <div class="event-time">8:00 PM</div>
+      <div class="event-name">Royal Feast &amp; Celebration</div>
+      <div class="event-meta">Dinner, live music, and dancing under the stars</div>
+    </div>
+  </div>
+</section>
+
+<!-- VENUE -->
+<section class="reveal" id="sec-venue">
+  <div class="eyebrow">Venue</div>
+  <h2 class="timeline-title">Find Us Here</h2>
+  <div class="royal-frame">
+    <div class="venue-name">The Crown Pavilion</div>
+    <div class="venue-addr">Palace Road, Civil Lines, Nagpur, Maharashtra 440001</div>
+    <a class="map-link" href="https://maps.google.com/?q=Civil+Lines+Nagpur" target="_blank" rel="noopener">View on Map</a>
+  </div>
+</section>
+
+<!-- DRESS CODE -->
+<section class="reveal" id="sec-dress">
+  <div class="eyebrow">Dress Code</div>
+  <h2 class="timeline-title">Royal Attire</h2>
+  <div class="dress-row">
+    <div class="swatch"><div class="swatch-color" style="background:#D9B24C"></div>Gold</div>
+    <div class="swatch"><div class="swatch-color" style="background:#1F5C4A"></div>Emerald</div>
+    <div class="swatch"><div class="swatch-color" style="background:#7A1F2B"></div>Maroon</div>
+    <div class="swatch"><div class="swatch-color" style="background:#F8F1E4"></div>Ivory</div>
+  </div>
+</section>
+
+<!-- RSVP GUEST DETAIL PAGE -->
+<section class="reveal" id="sec-rsvp">
+  <div class="eyebrow" style="text-align:center;">Your Presence Is Our Present</div>
+  <h2 class="timeline-title">RSVP — Guest Details</h2>
+  <div class="rsvp-page">
+    <div class="rsvp-intro">Kindly share your details so we may reserve your place at the ceremony.</div>
+    <form id="rsvpForm">
+      <div class="field">
+        <label for="gName">Full Name</label>
+        <input type="text" id="gName" placeholder="Your full name" required>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="gPhone">Contact Number</label>
+          <input type="tel" id="gPhone" placeholder="e.g. 98765 43210" required>
+        </div>
+        <div class="field">
+          <label for="gGuests">Number of Guests</label>
+          <input type="number" id="gGuests" min="1" value="1" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="gAttend">Will You Attend?</label>
+        <select id="gAttend">
+          <option value="Joyfully Accepts">Joyfully Accepts</option>
+          <option value="Regretfully Declines">Regretfully Declines</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="gMsg">A Message for the Couple (optional)</label>
+        <textarea id="gMsg" rows="3" placeholder="Your blessings and wishes..."></textarea>
+      </div>
+      <button type="submit" class="rsvp-submit">Submit RSVP</button>
+    </form>
+    <div class="rsvp-confirm" id="rsvpConfirm">
+      ✦ Thank you! Your RSVP has been recorded. We look forward to celebrating with you. ✦
+    </div>
+    <div class="rsvp-note">Please submit by 10th November 2026</div>
+  </div>
+</section>
+
+<footer>With royal blessings, Shreeneeta &amp; Gz</footer>
+
+<script>
+  /* ---------- Gold confetti ---------- */
+  const confettiContainer = document.getElementById('confetti');
+  const shapes = ['♦','●','♛'];
+  for(let i=0;i<24;i++){
+    const p = document.createElement('div');
+    p.className='flake';
+    const left = Math.random()*100;
+    const size = 12 + Math.random()*10;
+    const duration = 8 + Math.random()*8;
+    const delay = Math.random()*14;
+    const drift = (Math.random()*80-40)+'px';
+    p.style.left = left+'vw';
+    p.style.fontSize = size+'px';
+    p.style.color = Math.random()>0.5 ? '#D9B24C' : '#7A1F2B';
+    p.style.animationDuration = duration+'s';
+    p.style.animationDelay = delay+'s';
+    p.style.setProperty('--drift', drift);
+    p.textContent = shapes[Math.floor(Math.random()*shapes.length)];
+    confettiContainer.appendChild(p);
+  }
+
+  /* ---------- Light burst on gate open ---------- */
+  const overlay = document.getElementById('overlay');
+  for(let i=0;i<22;i++){
+    const d = document.createElement('div');
+    d.className='light-burst';
+    const size = 6 + Math.random()*16;
+    d.style.width = size+'px';
+    d.style.height = size+'px';
+    const angle = Math.random()*Math.PI*2;
+    const dist = 220 + Math.random()*340;
+    d.style.setProperty('--dx', Math.cos(angle)*dist+'px');
+    d.style.setProperty('--dy', Math.sin(angle)*dist+'px');
+    d.style.animationDelay = (Math.random()*.35)+'s';
+    overlay.appendChild(d);
+  }
+
+  /* ---------- Scroll reveal ---------- */
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+  }, {threshold:0.15});
+  revealEls.forEach(el=>io.observe(el));
+
+  /* ---------- Countdown ---------- */
+  const EVENT_DATE = new Date('2026-11-20T18:30:00+05:30').getTime();
+  function updateCountdown(){
+    const now = Date.now();
+    let diff = EVENT_DATE - now;
+    if(diff < 0) diff = 0;
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff / (1000*60*60)) % 24);
+    const mins = Math.floor((diff / (1000*60)) % 60);
+    const secs = Math.floor((diff / 1000) % 60);
+    document.getElementById('cd-days').textContent = days;
+    document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  /* ---------- RSVP form submission (saves to Google Sheet) ---------- */
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9RF5iJYhZMRjVAiHPM5u5spR0uOSTmeU1RHzoBJk4qyIrHcTBh0CLb604B2qZpqzejw/exec';
+  const rsvpForm = document.getElementById('rsvpForm');
+  const rsvpConfirm = document.getElementById('rsvpConfirm');
+  const rsvpSubmitBtn = rsvpForm.querySelector('.rsvp-submit');
+  rsvpForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const name = document.getElementById('gName').value.trim();
+    const phone = document.getElementById('gPhone').value.trim();
+    const guests = document.getElementById('gGuests').value;
+    const attend = document.getElementById('gAttend').value;
+    const msg = document.getElementById('gMsg').value.trim();
+
+    rsvpSubmitBtn.disabled = true;
+    rsvpSubmitBtn.textContent = 'Submitting...';
+
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ name, phone, guests, attend, msg })
+    }).then(()=>{
+      rsvpConfirm.classList.add('show');
+      rsvpForm.reset();
+      rsvpSubmitBtn.textContent = 'Submit RSVP';
+      rsvpSubmitBtn.disabled = false;
+    }).catch(()=>{
+      rsvpConfirm.classList.add('show');
+      rsvpForm.reset();
+      rsvpSubmitBtn.textContent = 'Submit RSVP';
+      rsvpSubmitBtn.disabled = false;
+    });
+  });
+
+  /* ---------- Royal entry fanfare ---------- */
+  let musicStarted = false, musicOn = true, trumpet, trumpet2, timpani, cymbal, strings, loop;
+  function initMusic(){
+    trumpet = new Tone.PolySynth(Tone.Synth, {
+      oscillator:{type:'sawtooth'},
+      envelope:{attack:0.015, decay:0.2, sustain:0.35, release:0.5}
+    }).toDestination();
+    trumpet.volume.value = -9;
+
+    trumpet2 = new Tone.Synth({
+      oscillator:{type:'square'},
+      envelope:{attack:0.01, decay:0.15, sustain:0.3, release:0.4}
+    }).toDestination();
+    trumpet2.volume.value = -16;
+
+    strings = new Tone.PolySynth(Tone.Synth, {
+      oscillator:{type:'sine'},
+      envelope:{attack:0.4, decay:0.3, sustain:0.6, release:1.6}
+    }).toDestination();
+    strings.volume.value = -19;
+
+    timpani = new Tone.MembraneSynth({
+      pitchDecay:0.04, octaves:5,
+      envelope:{attack:0.001, decay:0.35, sustain:0.01, release:0.3}
+    }).toDestination();
+    timpani.volume.value = -6;
+
+    cymbal = new Tone.NoiseSynth({
+      noise:{type:'white'},
+      envelope:{attack:0.005, decay:0.6, sustain:0}
+    }).toDestination();
+    cymbal.volume.value = -22;
+
+    const motif = [
+      {chord:['C4','E4','G4'], lead:'G4', t:'8n', hit:true},
+      {chord:null,             lead:'C5', t:'8n', hit:false},
+      {chord:['C4','E4','G4'], lead:'E5', t:'4n', hit:true},
+      {chord:null,             lead:'G4', t:'8n', hit:false},
+      {chord:['F4','A4','C5'], lead:'C5', t:'8n', hit:true},
+      {chord:null,             lead:'A4', t:'8n', hit:false},
+      {chord:['G4','B4','D5'], lead:'D5', t:'4n', hit:true},
+      {chord:null,             lead:'B4', t:'8n', hit:false},
+      {chord:['C4','E4','G4'], lead:'G5', t:'2n', hit:true, crash:true},
+    ];
+    let idx = 0;
+    loop = new Tone.Loop(time=>{
+      const step = motif[idx % motif.length];
+      trumpet2.triggerAttackRelease(step.lead, step.t, time);
+      if(step.chord){
+        trumpet.triggerAttackRelease(step.chord, step.t, time);
+        strings.triggerAttackRelease(step.chord, '2n', time);
+      }
+      if(step.hit){ timpani.triggerAttackRelease('C2', '8n', time); }
+      if(step.crash){ cymbal.triggerAttackRelease('4n', time); }
+      idx++;
+    }, '4n');
+
+    Tone.Transport.bpm.value = 104;
+    loop.start(0);
+    Tone.Transport.start();
+  }
+  function toggleMusic(){
+    const btn = document.getElementById('musicBtn');
+    if(!musicStarted){
+      Tone.start().then(()=>{ initMusic(); musicStarted = true; musicOn = true; btn.classList.remove('muted'); });
+      return;
+    }
+    musicOn = !musicOn;
+    Tone.Transport.mute = !musicOn;
+    btn.classList.toggle('muted', !musicOn);
+  }
+  document.getElementById('musicBtn').addEventListener('click', toggleMusic);
+
+  /* ---------- Gate open ---------- */
+  const crestWrap = document.getElementById('crestWrap');
+  const musicBtn = document.getElementById('musicBtn');
+  crestWrap.addEventListener('click', ()=>{
+    overlay.classList.add('open');
+    if(!musicStarted){ Tone.start().then(initMusic); musicStarted = true; }
+    setTimeout(()=>{
+      overlay.classList.add('done');
+      musicBtn.classList.add('show');
+      document.getElementById('sec-hero').classList.add('in');
+    }, 1500);
+  }, {once:true});
+</script>
+
+</body>
+</html>
